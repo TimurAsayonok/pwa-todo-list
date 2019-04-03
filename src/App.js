@@ -6,11 +6,21 @@ class App extends Component {
   state = {
     items: [],
     loading: true,
-    todoItem: ''
+    todoItem: '',
+    offline: !navigator.onLine
   }
 
   componentDidMount() {
     this.onGetItems();
+
+    //event listeners for online or offline for window
+    window.addEventListener('online', this.setOfflineStatus)
+    window.addEventListener('offline', this.setOfflineStatus)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('online', this.setOfflineStatus)
+    window.removeEventListener('offline', this.setOfflineStatus)
   }
 
   onGetItems = () => {
@@ -49,16 +59,26 @@ class App extends Component {
       .then(items => this.setState({ items }))
   }
 
+  setOfflineStatus = () => {
+    this.setState({ offline: !navigator.onLine })
+  }
+
   render() {
     return (
       <div className="App">
         <nav className="navbar navbar-light bg-light">
           <span className="navbar-brand mb-0 h1">
             <img src={logo} className="App-logo" alt="logo"/>
-            Todo List
+            My Todo List 2
           </span>
-        </nav>
+          {/* Added offline badget */}
+          {this.state.offline && (
+            <span className="badge badge-danger my-3">
+              Offline
+          </span>
+          )}
 
+        </nav>
         <div className="px-3 py-2">
           <form className="form-inline my-3" onSubmit={this.onAddItem}>
             <div className="form-group mb-2 p-0 pr-3 col-8 col-sm-10">
