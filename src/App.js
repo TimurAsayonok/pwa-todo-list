@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+const API_URL = 'http://192.168.1.20:4567/items.json';
+
 class App extends Component {
   state = {
     items: [],
@@ -24,7 +26,7 @@ class App extends Component {
   }
 
   onGetItems = () => {
-    fetch('http://localhost:4567/items.json')
+    fetch(API_URL)
       .then(response => response.json())
       .then(items => {
         this.setState({
@@ -36,7 +38,7 @@ class App extends Component {
   onAddItem = (e) => {
     e.preventDefault();
 
-    fetch('http://localhost:4567/items.json', {
+    fetch(API_URL, {
       method: 'POST',
       body: JSON.stringify({ item: this.state.todoItem }),
       headers: {
@@ -44,11 +46,17 @@ class App extends Component {
       }
     })
       .then(response => response.json())
-      .then(items => this.setState({ items, todoItem: '' }))
+      .then(items => {
+        if(items.error) {
+          alert(items.error)
+        } else {
+          this.setState({ items, todoItem: '' })
+        }
+      })
   }
 
   onDeleteItem = (itemId) => {
-    fetch('http://localhost:4567/items.json', {
+    fetch(API_URL, {
       method: 'DELETE',
       body: JSON.stringify({ id: itemId }),
       headers: {
@@ -56,7 +64,13 @@ class App extends Component {
       }
     })
       .then(response => response.json())
-      .then(items => this.setState({ items }))
+      .then(items => {
+        if (items.error) {
+          alert(items.error)
+        } else {
+          this.setState({ items, todoItem: '' })
+        }
+      })
   }
 
   setOfflineStatus = () => {

@@ -38,6 +38,23 @@ workbox.routing.registerRoute(
   workbox.strategies.networkFirst()
 )
 
+/** even listener for cath any fetch from app */
+self.addEventListener('fetch', event =>{
+  //check req is POST or DELETE
+  if(event.request.method === 'POST' || event.request.method === 'DELETE') {
+    //call this fetch
+    event.respondWith(
+      fetch(event.request).catch(err => {
+        return new Response(
+          JSON.stringify({ error: "This action disabled while app is offline"}),
+          {
+            headers: { 'Content-Type': 'application/json'}
+          }
+        )
+      })
+    )
+  }
+})
 
 //tell worbox to cache static res.
 /**
